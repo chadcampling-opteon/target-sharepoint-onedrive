@@ -1,0 +1,106 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: "target-sharepoint-onedrive"
+default_environment: test
+venv:
+  backend: uv
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: tap-smoke-test
+    variant: meltano
+    pip_url: git+https://github.com/meltano/tap-smoke-test.git
+    config:
+      streams:
+      - stream_name: animals
+        input_filename: https://raw.githubusercontent.com/meltano/tap-smoke-test/main/demo-data/animals-data.jsonl
+
+  loaders:
+  - name: "target-sharepoint-onedrive"
+    namespace: "target_sharepoint_onedrive"
+    pip_url: -e .
+    capabilities:
+    - about
+    - stream-maps
+    - schema-flattening
+
+    settings:
+    # Authentication
+    - name: tenant_id
+      label: Tenant ID
+      description: Azure AD tenant ID (optional if using environment-based authentication)
+      required: false
+
+    - name: client_id
+      label: Client ID
+      description: Azure AD application client ID (optional if using environment-based authentication)
+      required: false
+
+    - name: client_secret
+      kind: password
+      label: Client Secret
+      description: Azure AD application client secret (optional if using environment-based authentication)
+      required: false
+      sensitive: true
+
+    # Destination Configuration
+    - name: destination_url
+      label: Destination URL
+      description: SharePoint or OneDrive destination URL. For SharePoint: https://graph.microsoft.com/v1.0/sites/{domain}:/sites/{site-name}:/ For OneDrive: https://graph.microsoft.com/v1.0/me/drive or https://graph.microsoft.com/v1.0/users/{user-id}/drive
+      required: true
+
+    - name: folder_path
+      label: Folder Path
+      description: Optional folder path within the document library or OneDrive
+      default: ""
+
+    # File Configuration
+    - name: file_naming_scheme
+      label: File Naming Scheme
+      description: Scheme for naming output files. Supports variables: {stream_name}, {timestamp}, {batch_id}
+      default: "{stream_name}_{timestamp}.csv"
+
+    - name: timestamp_format
+      label: Timestamp Format
+      description: Format for timestamp in filename (strftime format)
+      default: "%Y%m%d_%H%M%S"
+
+    - name: overwrite_files
+      kind: boolean
+      label: Overwrite Files
+      description: Whether to overwrite existing files with the same name
+      default: true
+
+    - name: batch_size_rows
+      kind: integer
+      label: Batch Size Rows
+      description: Maximum number of records per file
+      default: 10000
+
+    # Stream Maps
+    - name: stream_maps
+      label: Stream Maps
+      description: Config object for stream maps capability
+
+    - name: stream_map_config
+      label: Stream Map Config
+      description: User-defined config values to be used within map expressions
+
+    # Schema Flattening
+    - name: flattening_enabled
+      kind: boolean
+      label: Flattening Enabled
+      description: 'True' to enable schema flattening and automatically expand nested properties
+      default: false
+
+    - name: flattening_max_depth
+      kind: integer
+      label: Flattening Max Depth
+      description: The max depth to flatten schemas
+      default: 0
+
+    # Required settings validation
+    settings_group_validation:
+    - [destination_url]
+    - [tenant_id, client_id, client_secret]

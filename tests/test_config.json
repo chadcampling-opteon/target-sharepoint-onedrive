@@ -1,0 +1,13 @@
+{
+  "tenant_id": "test-tenant-id",
+  "client_id": "test-client-id",
+  "client_secret": "test-client-secret",
+  "destination_url": "https://graph.microsoft.com/v1.0/sites/testdomain.sharepoint.com:/sites/TestSite:/",
+  "folder_path": "test-folder",
+  "file_naming_scheme": "{stream_name}_{timestamp}.csv",
+  "timestamp_format": "%Y%m%d_%H%M%S",
+  "overwrite_files": true,
+  "batch_size_rows": 10000,
+  "flattening_enabled": false,
+  "flattening_max_depth": 0
+} 

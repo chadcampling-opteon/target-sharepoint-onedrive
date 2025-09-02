@@ -1,0 +1,21 @@
+{
+  "tenant_id": "your-tenant-id-here",
+  "client_id": "your-client-id-here",
+  "client_secret": "your-client-secret-here",
+  "destination_url": "https://graph.microsoft.com/v1.0/me/drive",
+  "folder_path": "data/exports",
+  "file_naming_scheme": "{stream_name}_{timestamp}.csv",
+  "timestamp_format": "%Y%m%d_%H%M%S",
+  "overwrite_files": true,
+  "batch_size_rows": 10000,
+  "flattening_enabled": false,
+  "flattening_max_depth": 0,
+  "stream_maps": {
+    "stream_name_mapping": {
+      "source_stream_name": "target_stream_name"
+    }
+  },
+  "stream_map_config": {
+    "custom_field": "custom_value"
+  }
+} 
